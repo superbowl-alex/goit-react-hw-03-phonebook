@@ -33,6 +33,29 @@ export default class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    try {
+      const contacts = JSON.parse(localStorage.getItem('contacts'));
+      if (contacts) {
+        this.setState({
+          contacts: contacts,
+        });
+      }
+    } catch (error) {
+      console.error('Get state error: ', error.message);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      try {
+        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+      } catch (error) {
+        console.error('Set state error: ', error.message);
+      }
+    }
+  }
+
   findContactByName = name => {
     const { contacts } = this.state;
     return contacts.find(item => item.name.toLowerCase() === name);
@@ -76,29 +99,6 @@ export default class App extends Component {
   changeFilter = e => {
     this.setState({ filter: e.currentTarget.value });
   };
-
-  componentDidMount() {
-    try {
-      const contacts = JSON.parse(localStorage.getItem('contacts'));
-      if (contacts) {
-        this.setState({
-          contacts: contacts,
-        });
-      }
-    } catch (error) {
-      console.error('Get state error: ', error.message);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.contacts) {
-      try {
-        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-      } catch (error) {
-        console.error('Set state error: ', error.message);
-      }
-    }
-  }
 
   render() {
     const { contacts, filter } = this.state;
